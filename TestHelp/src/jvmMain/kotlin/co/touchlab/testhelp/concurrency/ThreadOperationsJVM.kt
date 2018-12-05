@@ -23,3 +23,5 @@ actual class MPFuture<T>(private val future: Future<T>) {
 actual fun sleep(time: Long) {
     Thread.sleep(time)
 }
+
+actual fun currentTimeMillis():Long = System.currentTimeMillis()

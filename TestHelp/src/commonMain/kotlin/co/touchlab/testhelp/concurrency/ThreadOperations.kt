@@ -15,20 +15,20 @@ fun createWorker():MPWorker = MPWorker()
 
 expect fun sleep(time:Long)
 
-class ThreadOperations<C>(val producer:()->C){
-    private val exes = mutableListOf<(C)->Unit>()
-    private val tests = mutableListOf<(C)->Unit>()
+class ThreadOperations<T>(val producer:()->T){
+    private val exes = mutableListOf<(T)->Unit>()
+    private val tests = mutableListOf<(T)->Unit>()
     var lastRunTime = 0L
 
-    fun exe(proc:(C)->Unit){
+    fun exe(proc:(T)->Unit){
         exes.add(proc)
     }
 
-    fun test(proc:(C)->Unit){
+    fun test(proc:(T)->Unit){
         tests.add(proc)
     }
 
-    fun run(threads:Int, collection:C = producer(), randomize:Boolean = false):C{
+    fun run(threads:Int, randomize:Boolean = false):T{
 
         if(randomize){
             exes.shuffle()
@@ -37,6 +37,7 @@ class ThreadOperations<C>(val producer:()->C){
 
         exes.freeze()
 
+        val target = producer()
         val start = currentTimeMillis()
 
         val workers= Array(threads){MPWorker()}
@@ -44,16 +45,16 @@ class ThreadOperations<C>(val producer:()->C){
             val ex = exes[i]
             workers[i % workers.size]
                 .runBackground {
-                    ex(collection)
+                    ex(target)
                 }
         }
         workers.forEach { it.requestTermination() }
 
-        tests.forEach { it(collection) }
+        tests.forEach { it(target) }
 
         lastRunTime = currentTimeMillis() - start
 
-        return collection
+        return target
     }
 }
 
