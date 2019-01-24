@@ -35,7 +35,8 @@ task emptyJavadocJar(type: Jar) {
 
 signing {
   required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-  sign(publishing.publications)
+    sign(publishing.publications)
+//  sign configurations.archives
 }
 
 publishing {
