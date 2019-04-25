@@ -57,6 +57,12 @@ kotlin {
             }
         }
 
+        fromPreset(presets.mingwX64, 'mingw'){
+            compilations.each {
+                it.extraOpts("-linker-options", "-Lc:\\msys64\\mingw64\\lib")
+                it.extraOpts("-linker-options", "-lsqlite3")
+            }
+        }
     }
     sourceSets {
         commonMain {
@@ -86,11 +92,11 @@ kotlin {
         nativeCommonMain { }
         nativeCommonTest { }
 
-        configure([iosX64Main, iosArm64Main, macosMain, iosArm32Main]) {
+        configure([iosX64Main, iosArm64Main, macosMain, iosArm32Main, mingwMain]) {
             dependsOn nativeCommonMain
         }
 
-        configure([iosX64Test, iosArm64Test, macosTest, iosArm32Test]) {
+        configure([iosX64Test, iosArm64Test, macosTest, iosArm32Test, mingwTest]) {
             dependsOn nativeCommonTest
         }
     }
