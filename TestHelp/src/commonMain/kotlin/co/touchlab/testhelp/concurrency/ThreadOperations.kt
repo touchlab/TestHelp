@@ -1,6 +1,6 @@
 package co.touchlab.testhelp.concurrency
 
-import co.touchlab.stately.freeze
+import co.touchlab.testhelp.freeze
 
 expect class MPWorker(){
     fun <T> runBackground(backJob:()->T):MPFuture<T>

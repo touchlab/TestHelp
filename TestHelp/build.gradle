@@ -31,37 +31,18 @@ kotlin {
 //                fromPreset(presets.macosX64, 'nativeCommon')
 
         fromPreset(presets.macosX64, 'macos'){
-            compilations.each {
-                it.extraOpts("-linker-options", "-lsqlite3")
-            }
             compilations.test {
                 it.extraOpts("-native-library", "../KotlinCpp/bcdist/macos_x64/tlruntime.bc")
             }
         }
 
-        fromPreset(presets.iosX64, 'iosX64'){
-            compilations.each {
-                it.extraOpts("-linker-options", "-lsqlite3")
-            }
-        }
-
-        fromPreset(presets.iosArm64, 'iosArm64'){
-            compilations.each {
-                it.extraOpts("-linker-options", "-lsqlite3")
-            }
-        }
-
-        fromPreset(presets.iosArm32, 'iosArm32'){
-            compilations.each {
-                it.extraOpts("-linker-options", "-lsqlite3")
-            }
-        }
-
+        fromPreset(presets.iosX64, 'iosX64')
+        fromPreset(presets.iosArm64, 'iosArm64')
+        fromPreset(presets.iosArm32, 'iosArm32')
     }
     sourceSets {
         commonMain {
             dependencies {
-                implementation "co.touchlab:stately:$STATELY_VERSION"
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
             }
         }
@@ -140,13 +121,3 @@ task mergeCppAll(dependsOn:build) {
  */
 
 apply from: "$rootDir/gradle/gradle-mvn-mpp-push.gradle"
-
-//publishing {
-//    publications.all {
-//        // Rewrite all artifacts from using the project name to just 'runtime'.
-//        artifactId = artifactId.replace(project.name, 'sqliter')
-//    }
-//}
-
-//tasks.findByName("publish").dependsOn("mergeCppAll")
-//tasks.findByName("publishToMavenLocal").dependsOn("mergeCppAll")
