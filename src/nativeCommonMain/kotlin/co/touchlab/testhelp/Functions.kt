@@ -7,3 +7,4 @@ actual fun Throwable.printStackTrace(){
 }
 
 actual fun <T> T.freeze(): T = this.freeze()
+actual val multithreaded: Boolean = true
