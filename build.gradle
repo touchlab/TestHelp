@@ -19,6 +19,7 @@ buildscript {
         jcenter()
         google()
         gradlePluginPortal()
+//        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 
     dependencies {
@@ -30,6 +31,7 @@ apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 repositories {
     mavenCentral()
+//    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 group = GROUP
