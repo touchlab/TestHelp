@@ -5,7 +5,7 @@ import kotlin.js.Date
 actual class MPWorker actual constructor(){
 
     actual fun <T> runBackground(backJob: () -> T): MPFuture<T> {
-        return MPFuture()
+        return MPFuture(backJob())
     }
 
     actual fun requestTermination() {
@@ -13,10 +13,8 @@ actual class MPWorker actual constructor(){
     }
 }
 
-actual class MPFuture<T>() {
-    actual fun consume():T{
-        throw Throwable()
-    }
+actual class MPFuture<T>(val result: T) {
+    actual fun consume():T = result
 }
 
 actual fun sleep(time: Long) {

@@ -41,13 +41,14 @@ class ThreadOperations<T>(val producer:()->T){
         val start = currentTimeMillis()
 
         val workers= Array(threads){MPWorker()}
-        for(i in 0 until exes.size){
-            val ex = exes[i]
-            workers[i % workers.size]
+        val futures = exes.mapIndexed { index, function ->
+            workers[index % workers.size]
                 .runBackground {
-                    ex(target)
+                    function(target)
                 }
         }
+
+        futures.forEach { it.consume() }
         workers.forEach { it.requestTermination() }
 
         tests.forEach { it(target) }

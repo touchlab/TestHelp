@@ -57,16 +57,6 @@ kotlin {
 //    androidNativeArm32()
 //    androidNativeArm64()
         mingwX64()
-
-//        fromPreset(presets.jvm, 'jvm')
-
-//                fromPreset(presets.macosX64, 'nativeCommon')
-
-//        fromPreset(presets.macosX64, 'macos')
-//        fromPreset(presets.iosX64, 'iosX64')
-//        fromPreset(presets.iosArm64, 'iosArm64')
-//        fromPreset(presets.iosArm32, 'iosArm32')
-//        fromPreset(presets.mingwX64, 'mingw')
     }
     sourceSets {
         commonMain {
