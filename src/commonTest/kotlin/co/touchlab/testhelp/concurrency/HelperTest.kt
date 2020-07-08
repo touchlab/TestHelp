@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 class HelperTest {
     @Test
-    fun backgroundTest(){
+    fun backgroundTest() {
         val result = background {
             SomeData("hey")
         }
@@ -13,4 +13,4 @@ class HelperTest {
     }
 }
 
-data class SomeData(val s:String)
+data class SomeData(val s: String)

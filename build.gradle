@@ -24,6 +24,7 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
     }
 }
 
@@ -162,6 +163,22 @@ allprojects {
     tasks.register('publishLinux') {
         if(project.tasks.findByName('publish')) {
             dependsOn 'publishLinuxMips32PublicationToMavenRepository'
+        }
+    }
+
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+    ktlint {
+        version.set("0.37.2")
+        enableExperimentalRules.set(true)
+        verbose.set(true)
+        filter {
+            exclude { it.file.path.contains("build/") }
+        }
+    }
+
+    afterEvaluate {
+        tasks.named("check").configure {
+            dependsOn(tasks.getByName("ktlintCheck"))
         }
     }
 }
