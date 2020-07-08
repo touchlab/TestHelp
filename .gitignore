@@ -36,7 +36,11 @@ gradle-app.setting
 
 # local project files
 lib/
+
 .idea/
+!/.idea/codeStyles/*
+!/.idea/inspectionProfiles/*
+
 proto/compiler/protoc-artifacts
 proto/compiler/tests
 
@@ -44,6 +48,8 @@ proto/compiler/google/src/google/protobuf/compiler/kotlin/bin
 proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
 
 peformance/build
+
+
 
 # translator auto generated artifacts
 kotstd/ll
