@@ -19,7 +19,6 @@ buildscript {
         jcenter()
         google()
         gradlePluginPortal()
-//        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 
     dependencies {
@@ -32,7 +31,6 @@ apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 repositories {
     mavenCentral()
-//    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 group = GROUP
@@ -40,9 +38,8 @@ version = VERSION_NAME
 
 kotlin {
     targets {
-//            macosX64("nativeCommon")
         jvm()
-    js()
+        js()
         macosX64()
         iosArm32()
         iosArm64()
@@ -55,8 +52,6 @@ kotlin {
         tvosX64()
         linuxArm32Hfp()
         linuxMips32()
-//    androidNativeArm32()
-//    androidNativeArm64()
         mingwX64()
     }
     sourceSets {
@@ -113,9 +108,6 @@ kotlin {
                    targets.linuxX64,
                    targets.linuxArm32Hfp,
                    targets.linuxMips32
-//                   ,
-//                   targets.androidNativeArm32,
-//                   targets.androidNativeArm64
         ]) {
             compilations.main.source(sourceSets.nativeCommonMain)
             compilations.test.source(sourceSets.nativeCommonTest)
