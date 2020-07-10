@@ -3,8 +3,11 @@ local.properties
 build/
 
 .idea/**/*
+!/.idea/inspectionProfiles/
+!/.idea/codeStyles/
 
 *.iml
 
 .DS_Store
 .vscode
+
