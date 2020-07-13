@@ -39,7 +39,10 @@ version = VERSION_NAME
 kotlin {
     targets {
         jvm()
-        js()
+        js {
+            browser()
+            nodejs()
+        }
         macosX64()
         iosArm32()
         iosArm64()
