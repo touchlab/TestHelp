@@ -3,8 +3,10 @@ local.properties
 build/
 
 .idea/**/*
-!/.idea/inspectionProfiles/
-!/.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/inspectionProfiles/**
+!.idea/codeStyles/
+!.idea/codeStyles/**
 
 *.iml
 
