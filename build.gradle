@@ -37,7 +37,6 @@ group = GROUP
 version = VERSION_NAME
 
 kotlin {
-    targets {
         jvm()
         js {
             browser()
@@ -56,7 +55,6 @@ kotlin {
         linuxArm32Hfp()
         linuxMips32()
         mingwX64()
-    }
     sourceSets {
         commonMain {
             dependencies {
