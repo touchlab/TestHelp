@@ -16,8 +16,7 @@ expect val isMultithreaded: Boolean
  * you want.
  */
 val <T> T.isNativeFrozen: Boolean
-get() = !isNative || isFrozen
-
+    get() = !isNative || isFrozen
 
 /**
  * Determine if object is frozen. Will return false on non-native platforms.

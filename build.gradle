@@ -19,11 +19,11 @@ buildscript {
         jcenter()
         google()
         gradlePluginPortal()
-//        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:9.2.1"
     }
 }
 
@@ -31,17 +31,17 @@ apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 repositories {
     mavenCentral()
-//    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 group = GROUP
 version = VERSION_NAME
 
 kotlin {
-    targets {
-//            macosX64("nativeCommon")
         jvm()
-    js()
+        js {
+            browser()
+            nodejs()
+        }
         macosX64()
         iosArm32()
         iosArm64()
@@ -54,10 +54,7 @@ kotlin {
         tvosX64()
         linuxArm32Hfp()
         linuxMips32()
-//    androidNativeArm32()
-//    androidNativeArm64()
         mingwX64()
-    }
     sourceSets {
         commonMain {
             dependencies {
@@ -112,9 +109,6 @@ kotlin {
                    targets.linuxX64,
                    targets.linuxArm32Hfp,
                    targets.linuxMips32
-//                   ,
-//                   targets.androidNativeArm32,
-//                   targets.androidNativeArm64
         ]) {
             compilations.main.source(sourceSets.nativeCommonMain)
             compilations.test.source(sourceSets.nativeCommonTest)
@@ -162,6 +156,22 @@ allprojects {
     tasks.register('publishLinux') {
         if(project.tasks.findByName('publish')) {
             dependsOn 'publishLinuxMips32PublicationToMavenRepository'
+        }
+    }
+
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+    ktlint {
+        version.set("0.37.2")
+        enableExperimentalRules.set(true)
+        verbose.set(true)
+        filter {
+            exclude { it.file.path.contains("build/") }
+        }
+    }
+
+    afterEvaluate {
+        tasks.named("check").configure {
+            dependsOn(tasks.getByName("ktlintCheck"))
         }
     }
 }
