@@ -30,10 +30,6 @@ def hasInMemorySigningKey() {
   return hasProperty('PGP_SIGNING_KEY')
 }
 
-def getInMemorySigningKey() {
-  return hasProperty('PGP_SIGNING_KEY') ? PGP_SIGNING_KEY.replace("\\n", "\n") : ""
-}
-
 task emptySourcesJar(type: Jar) {
   classifier = 'sources'
 }
@@ -41,13 +37,18 @@ task emptyJavadocJar(type: Jar) {
   classifier = 'javadoc'
 }
 
+
+def getGpgKey() {
+  return hasProperty('SIGNING_KEY') ? SIGNING_KEY : ""
+}
+
 signing {
   required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-  sign(publishing.publications)
-  if (hasInMemorySigningKey()) {
-    useInMemoryPgpKeys(getInMemorySigningKey(), "")
+  def gpgKey = getGpgKey()
+  if(gpgKey != "") {
+    useInMemoryPgpKeys(getGpgKey(), "")
   }
-//  sign configurations.archives
+  sign(publishing.publications)
 }
 
 publishing {
