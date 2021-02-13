@@ -46,15 +46,13 @@ signing {
   required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
   def gpgKey = getGpgKey()
   if(gpgKey != "") {
-    useInMemoryPgpKeys(getGpgKey(), "")
+    useInMemoryPgpKeys(gpgKey, "")
   }
   sign(publishing.publications)
 }
 
 publishing {
   publications.all {
-    artifact emptyJavadocJar
-
     pom.withXml {
       def root = asNode()
 
@@ -83,13 +81,6 @@ publishing {
           }
         }
       }
-    }
-  }
-
-  afterEvaluate {
-    publications.getByName('kotlinMultiplatform') {
-      // Source jars are only created for platforms, not the common artifact.
-      artifact emptySourcesJar
     }
   }
 
