@@ -7,7 +7,7 @@ class MPWorkerTest {
     @Test
     fun exceptionsThrowOnConsume() {
         val worker = MPWorker()
-        val future = worker.runBackground {
+        val future: MPFuture<Unit> = worker.runBackground {
             throw NullPointerException("Just a fake one")
         }
 

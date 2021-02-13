@@ -70,11 +70,13 @@ kotlin {
             }
         }
         jvmMain {
+            dependsOn commonMain
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
         }
         jvmTest {
+            dependsOn commonTest
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
                 implementation 'org.jetbrains.kotlin:kotlin-test-junit'
@@ -101,47 +103,69 @@ kotlin {
         nativeCommonTest {
             dependsOn commonTest
         }
-        macosX64Main {
+        nativeDarwinMain {
             dependsOn nativeCommonMain
+        }
+        nativeDarwinTest {
+            dependsOn nativeCommonTest
+        }
+        macosX64Main {
+            dependsOn nativeDarwinMain
         }
         iosArm32Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         iosArm64Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         iosX64Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         watchosArm32Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         watchosArm64Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         watchosX86Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         watchosX64Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         tvosArm64Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeDarwinMain
         }
         tvosX64Main {
+            dependsOn nativeDarwinMain
+        }
+
+        nativeMingwMain {
             dependsOn nativeCommonMain
         }
+        nativeMingwTest {
+            dependsOn nativeCommonTest
+        }
+
         mingwX64Main {
+            dependsOn nativeMingwMain
+        }
+
+        nativeLinuxMain {
             dependsOn nativeCommonMain
         }
+        nativeLinuxTest {
+            dependsOn nativeCommonTest
+        }
+
         linuxX64Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeLinuxMain
         }
         linuxArm32HfpMain {
-            dependsOn nativeCommonMain
+            dependsOn nativeLinuxMain
         }
         linuxMips32Main {
-            dependsOn nativeCommonMain
+            dependsOn nativeLinuxMain
         }
     }
 }

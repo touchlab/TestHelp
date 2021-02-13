@@ -1,6 +1,5 @@
 package co.touchlab.testhelp.concurrency
 
-import platform.posix.usleep
 import kotlin.native.concurrent.Future
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -24,10 +23,6 @@ actual class MPWorker actual constructor() {
 
 actual class MPFuture<T>(private val future: Future<T>) {
     actual fun consume(): T = future.result
-}
-
-actual fun sleep(time: Long) {
-    usleep((time * 1000).toUInt()) // this takes microseconds, so multiply by 1000 to use miliseconds.
 }
 
 actual fun currentTimeMillis(): Long = getTimeMillis()

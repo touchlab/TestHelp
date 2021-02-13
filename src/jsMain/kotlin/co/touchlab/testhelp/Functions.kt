@@ -1,8 +1,5 @@
 package co.touchlab.testhelp
 
-actual fun Throwable.printStackTrace() {
-}
-
 actual fun <T> T.freeze(): T = this
 actual val isNative: Boolean = false
 actual val isMultithreaded: Boolean = false
