@@ -53,6 +53,8 @@ signing {
 
 publishing {
   publications.all {
+    artifact emptyJavadocJar
+
     pom.withXml {
       def root = asNode()
 
