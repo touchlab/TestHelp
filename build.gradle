@@ -43,19 +43,6 @@ kotlin {
         nodejs()
     }
     macosX64()
-    iosArm32()
-    iosArm64()
-    iosX64()
-    watchosArm32()
-    watchosArm64()
-    watchosX86()
-    watchosX64()
-    tvosArm64()
-    tvosX64()
-    mingwX64()
-    linuxX64()
-    linuxArm32Hfp()
-    linuxMips32()
 
     sourceSets {
         commonMain {
@@ -83,7 +70,6 @@ kotlin {
             }
         }
 
-        //Disabling js till we sort out some testing
         jsMain {
             dependsOn commonMain
             dependencies {
@@ -107,61 +93,6 @@ kotlin {
         macosX64Main {
             dependsOn nativeDarwinMain
         }
-        iosArm32Main {
-            dependsOn nativeDarwinMain
-        }
-        iosArm64Main {
-            dependsOn nativeDarwinMain
-        }
-        iosX64Main {
-            dependsOn nativeDarwinMain
-        }
-        watchosArm32Main {
-            dependsOn nativeDarwinMain
-        }
-        watchosArm64Main {
-            dependsOn nativeDarwinMain
-        }
-        watchosX86Main {
-            dependsOn nativeDarwinMain
-        }
-        watchosX64Main {
-            dependsOn nativeDarwinMain
-        }
-        tvosArm64Main {
-            dependsOn nativeDarwinMain
-        }
-        tvosX64Main {
-            dependsOn nativeDarwinMain
-        }
-
-        nativeMingwMain {
-            dependsOn commonMain
-        }
-        nativeMingwTest {
-            dependsOn commonTest
-        }
-
-        mingwX64Main {
-            dependsOn commonMain
-        }
-
-        nativeLinuxMain {
-            dependsOn commonMain
-        }
-        nativeLinuxTest {
-            dependsOn commonTest
-        }
-
-        linuxX64Main {
-            dependsOn nativeLinuxMain
-        }
-        linuxArm32HfpMain {
-            dependsOn nativeLinuxMain
-        }
-        linuxMips32Main {
-            dependsOn nativeLinuxMain
-        }
     }
 }
 
@@ -172,18 +103,6 @@ configurations {
 apply from: "$rootDir/gradle/gradle-mvn-mpp-push.gradle"
 
 allprojects {
-    tasks.register('publishWindows') {
-        if(project.tasks.findByName('publish')) {
-            dependsOn 'publishMingwX64PublicationToMavenRepository'
-        }
-    }
-
-    tasks.register('publishLinux') {
-        if(project.tasks.findByName('publish')) {
-            dependsOn 'publishLinuxMips32PublicationToMavenRepository'
-        }
-    }
-
     apply plugin: "org.jlleitschuh.gradle.ktlint"
     ktlint {
         version.set("0.37.2")
