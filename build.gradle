@@ -43,6 +43,9 @@ kotlin {
         nodejs()
     }
     macosX64()
+    iosArm32()
+    iosArm64()
+    iosX64()
 
     sourceSets {
         commonMain {
@@ -91,6 +94,15 @@ kotlin {
         }
 
         macosX64Main {
+            dependsOn nativeDarwinMain
+        }
+        iosArm32Main {
+            dependsOn nativeDarwinMain
+        }
+        iosArm64Main {
+            dependsOn nativeDarwinMain
+        }
+        iosX64Main {
             dependsOn nativeDarwinMain
         }
     }
