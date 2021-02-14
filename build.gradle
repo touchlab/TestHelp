@@ -97,17 +97,11 @@ kotlin {
             }
         }
 
-        nativeCommonMain {
+        nativeDarwinMain {
             dependsOn commonMain
         }
-        nativeCommonTest {
-            dependsOn commonTest
-        }
-        nativeDarwinMain {
-            dependsOn nativeCommonMain
-        }
         nativeDarwinTest {
-            dependsOn nativeCommonTest
+            dependsOn commonTest
         }
 
         macosX64Main {
@@ -142,21 +136,21 @@ kotlin {
         }
 
         nativeMingwMain {
-            dependsOn nativeCommonMain
+            dependsOn commonMain
         }
         nativeMingwTest {
-            dependsOn nativeCommonTest
+            dependsOn commonTest
         }
 
         mingwX64Main {
-            dependsOn nativeMingwMain
+            dependsOn commonMain
         }
 
         nativeLinuxMain {
-            dependsOn nativeCommonMain
+            dependsOn commonMain
         }
         nativeLinuxTest {
-            dependsOn nativeCommonTest
+            dependsOn commonTest
         }
 
         linuxX64Main {
