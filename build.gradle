@@ -109,6 +109,7 @@ kotlin {
         nativeDarwinTest {
             dependsOn nativeCommonTest
         }
+
         macosX64Main {
             dependsOn nativeDarwinMain
         }
