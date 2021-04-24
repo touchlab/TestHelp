@@ -1,18 +1,29 @@
 package co.touchlab.testhelp.concurrency
 
+import co.touchlab.testhelp.freeze
+import kotlin.native.concurrent.AtomicReference
 import kotlin.native.concurrent.Future
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.native.concurrent.freeze
 import kotlin.system.getTimeMillis
 
 actual class MPWorker actual constructor() {
     val worker = Worker.start()
     actual fun <T> runBackground(backJob: () -> T): MPFuture<T> {
-        return MPFuture(
-            worker.execute(TransferMode.SAFE, { backJob.freeze() }) {
-                it()
+        val ar = AtomicReference<Throwable?>(null)
+        val wrappedJob: () -> T = {
+            try {
+                backJob()
+            } catch (e: Throwable) {
+                ar.value = e.freeze()
+                throw e
             }
+        }
+        return MPFuture(
+            worker.execute(TransferMode.SAFE, { wrappedJob.freeze() }) {
+                it()
+            },
+            ar
         )
     }
 
@@ -21,8 +32,20 @@ actual class MPWorker actual constructor() {
     }
 }
 
-actual class MPFuture<T>(private val future: Future<T>) {
-    actual fun consume(): T = future.result
+actual class MPFuture<T>(private val future: Future<T>, val thrown: AtomicReference<Throwable?>) {
+
+    actual fun consume(): T = try {
+        future.result
+    } catch (e: Exception) {
+        val th = thrown.value
+        if (th != null) {
+            throw th
+        } else {
+            throw e
+        }
+    } finally {
+        thrown.value = null // Memory leaks...
+    }
 }
 
 actual fun currentTimeMillis(): Long = getTimeMillis()
