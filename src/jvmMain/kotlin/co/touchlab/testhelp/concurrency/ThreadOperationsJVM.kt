@@ -18,6 +18,8 @@ actual class MPWorker actual constructor() {
 
 actual class MPFuture<T>(private val future: Future<T>) {
     actual fun consume(): T = future.get()
+    actual val done: Boolean
+        get() = future.isDone || future.isCancelled
 }
 
 actual fun sleep(time: Long) {

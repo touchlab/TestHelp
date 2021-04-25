@@ -8,6 +8,7 @@ expect class MPWorker() {
 }
 
 expect class MPFuture<T> {
+    val done:Boolean
     fun consume(): T
 }
 
@@ -28,7 +29,7 @@ class ThreadOperations<T>(val producer: () -> T) {
         tests.add(proc)
     }
 
-    fun run(threads: Int, randomize: Boolean = false): T {
+    fun run(threads: Int, randomize: Boolean = false, timeout: Long = 0): T {
         if (randomize) {
             exes.shuffle()
             tests.shuffle()
