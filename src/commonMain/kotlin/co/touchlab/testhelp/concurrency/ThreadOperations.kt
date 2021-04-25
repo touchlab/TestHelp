@@ -48,7 +48,15 @@ class ThreadOperations<T>(val producer: () -> T) {
                 }
         }
 
-        futures.forEach { it.consume() }
+        if(timeout == 0L) {
+            futures.forEach { it.consume() }
+        }else{
+            while (futures.any { !it.done }){
+                if(currentTimeMillis() - start < timeout)
+                    throw TestTimeoutException()
+                sleep(500)
+            }
+        }
         workers.forEach { it.requestTermination() }
 
         tests.forEach { it(target) }
@@ -58,5 +66,7 @@ class ThreadOperations<T>(val producer: () -> T) {
         return target
     }
 }
+
+class TestTimeoutException():Exception("ThreadOperations run timed out")
 
 expect fun currentTimeMillis(): Long
