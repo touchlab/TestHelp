@@ -8,7 +8,7 @@ expect class MPWorker() {
 }
 
 expect class MPFuture<T> {
-    val done:Boolean
+    val done: Boolean
     fun consume(): T
 }
 
@@ -17,8 +17,8 @@ fun createWorker(): MPWorker = MPWorker()
 expect fun sleep(time: Long)
 
 class ThreadOperations<T>(val producer: () -> T) {
-    private val exes = mutableListOf<(T)->Unit>()
-    private val tests = mutableListOf<(T)->Unit>()
+    private val exes = mutableListOf<(T) -> Unit>()
+    private val tests = mutableListOf<(T) -> Unit>()
     var lastRunTime = 0L
 
     fun exe(proc: (T) -> Unit) {
@@ -29,7 +29,7 @@ class ThreadOperations<T>(val producer: () -> T) {
         tests.add(proc)
     }
 
-    fun run(threads: Int, randomize: Boolean = false, timeout: Long = 0): T {
+    fun run(threads: Int, randomize: Boolean = false, timeout: Long = 0, onTimeout: () -> Unit = {}): T {
         if (randomize) {
             exes.shuffle()
             tests.shuffle()
@@ -48,13 +48,16 @@ class ThreadOperations<T>(val producer: () -> T) {
                 }
         }
 
-        if(timeout == 0L) {
+        if (timeout == 0L) {
             futures.forEach { it.consume() }
-        }else{
-            while (futures.any { !it.done }){
-                if(currentTimeMillis() - start < timeout)
+        } else {
+            while (futures.any { !it.done }) {
+                val measured = currentTimeMillis() - start
+                if (measured > timeout) {
+                    onTimeout()
                     throw TestTimeoutException()
-                sleep(500)
+                }
+                sleep(50)
             }
         }
         workers.forEach { it.requestTermination() }
@@ -67,6 +70,6 @@ class ThreadOperations<T>(val producer: () -> T) {
     }
 }
 
-class TestTimeoutException():Exception("ThreadOperations run timed out")
+class TestTimeoutException() : Exception("ThreadOperations run timed out")
 
 expect fun currentTimeMillis(): Long
