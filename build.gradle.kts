@@ -28,9 +28,10 @@ kotlin {
         tvosArm64(),
         tvosX64(),
         mingwX64(),
-        linuxX64(),
-        linuxArm32Hfp(),
-        linuxMips32()
+        linuxX64()
+        // ,
+        // linuxArm32Hfp(),
+        // linuxMips32()
     )
 
     jvm()
