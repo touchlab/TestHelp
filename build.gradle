@@ -54,8 +54,8 @@ kotlin {
     tvosX64()
     mingwX64()
     linuxX64()
-    linuxArm32Hfp()
-    linuxMips32()
+//    linuxArm32Hfp()
+//    linuxMips32()
 
     sourceSets {
         commonMain {
@@ -162,12 +162,12 @@ kotlin {
             dependsOn nativeLinuxMain
         }
 
-        linuxArm32HfpMain {
-            dependsOn nativeLinuxMain
-        }
-        linuxMips32Main {
-            dependsOn nativeLinuxMain
-        }
+//        linuxArm32HfpMain {
+//            dependsOn nativeLinuxMain
+//        }
+//        linuxMips32Main {
+//            dependsOn nativeLinuxMain
+//        }
     }
 }
 
