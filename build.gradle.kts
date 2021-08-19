@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family.LINUX
+
 plugins {
     kotlin("multiplatform")
 }
@@ -16,96 +19,92 @@ group = GROUP
 version = VERSION_NAME
 
 kotlin {
-    val knTargets = listOf(
-        macosX64(),
-        iosX64(),
-        iosArm64(),
-        iosArm32(),
-        watchosArm32(),
-        watchosArm64(),
-        watchosX86(),
-        watchosX64(),
-        tvosArm64(),
-        tvosX64(),
-        mingwX64("mingw"),
-        linuxX64(),
-        linuxArm32Hfp(),
-        linuxMips32()
-    )
 
+    macosX64()
+    iosX64()
+    iosArm64()
+    iosArm32()
+    watchosArm32()
+    watchosArm64()
+    watchosX86()
+    watchosX64()
+    tvosArm64()
+    tvosX64()
+    mingwX64("mingw")
+    linuxX64()
+    linuxArm32Hfp()
+    linuxMips32()
     jvm()
     js {
         browser()
         nodejs()
     }
 
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-            }
-        }
-        commonTest {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-common")
-                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
-            }
-        }
+    val commonMain by sourceSets.getting
+    val commonTest by sourceSets.getting
 
-        sourceSets.maybeCreate("jvmMain").apply {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib")
-            }
-        }
-        sourceSets.maybeCreate("jvmTest").apply {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test")
-                implementation("org.jetbrains.kotlin:kotlin-test-junit")
-            }
-        }
+    val jvmMain by sourceSets.getting
+    val jvmTest by sourceSets.getting
+    val jsMain by sourceSets.getting
+    val jsTest by sourceSets.getting
 
-        sourceSets.maybeCreate("jsMain").apply {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-            }
-        }
-        sourceSets.maybeCreate("jsTest").apply {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-js")
-            }
-        }
+    val nativeCommonMain by sourceSets.creating
+    val nativeCommonTest by sourceSets.creating
 
-        val nativeCommonMain = sourceSets.maybeCreate("nativeCommonMain")
-        val nativeCommonTest = sourceSets.maybeCreate("nativeCommonTest")
+    val nativeDarwinMain by sourceSets.creating
+    val nativeLinuxMain by sourceSets.creating
 
-        val appleMain = sourceSets.maybeCreate("nativeDarwinMain").apply {
-            dependsOn(nativeCommonMain)
-        }
-        val linuxMain = sourceSets.maybeCreate("nativeLinuxMain").apply {
-            dependsOn(nativeCommonMain)
-        }
-        val mingwMain = sourceSets.maybeCreate("mingwMain").apply {
-            dependsOn(nativeCommonMain)
-        }
+    /* Setup dependsOn relationships */
 
-        knTargets.forEach { target ->
-            when {
-                target.name.startsWith("mingw") -> {
-                    target.compilations.getByName("test").defaultSourceSet.dependsOn(nativeCommonTest)
-                }
-                target.name.startsWith("linux") -> {
-                    target.compilations.getByName("main").defaultSourceSet.dependsOn(linuxMain)
-                    target.compilations.getByName("test").defaultSourceSet.dependsOn(nativeCommonTest)
-                }
-                else -> {
-                    target.compilations.getByName("main").defaultSourceSet.dependsOn(appleMain)
-                    target.compilations.getByName("test").defaultSourceSet.dependsOn(nativeCommonTest)
-                }
-            }
+    nativeCommonMain.dependsOn(commonMain)
+    nativeCommonTest.dependsOn(commonTest)
+    nativeDarwinMain.dependsOn(nativeCommonMain)
+    nativeLinuxMain.dependsOn(nativeCommonMain)
 
+    targets.withType<KotlinNativeTarget>().all {
+        val mainSourceSet = compilations.getByName("main").defaultSourceSet
+        val testSourceSet = compilations.getByName("test").defaultSourceSet
+
+        mainSourceSet.dependsOn(nativeCommonMain)
+        testSourceSet.dependsOn(nativeCommonTest)
+
+        when {
+            konanTarget.family == LINUX -> mainSourceSet.dependsOn(nativeLinuxMain)
+            konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
+            else -> mainSourceSet.dependsOn(nativeCommonMain)
         }
     }
+
+    /* Setup dependencies */
+
+    commonMain.dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
+    }
+
+    commonTest.dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-test-common")
+        implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
+    }
+
+    jvmMain.dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    }
+
+    jvmTest.dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-test")
+        implementation("org.jetbrains.kotlin:kotlin-test-junit")
+    }
+
+    jsMain.dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+    }
+
+    jsTest.dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-test-js")
+    }
 }
+
+/* Setup Publications */
 
 /*if (!HostManager.hostIsLinux) {
     tasks.findByName("linuxX64Test")?.enabled = false
@@ -126,7 +125,7 @@ tasks.register("publishMac") {
 */
 
 tasks.register("publishWindows") {
-    if(project.tasks.findByName("publish") != null) {
+    if (project.tasks.findByName("publish") != null) {
         setDependsOn(listOf("publishMingwPublicationToMavenRepository"))
         // dependsOn 'publishMingwX64PublicationToMavenRepository'
     }
