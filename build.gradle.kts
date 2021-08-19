@@ -27,11 +27,10 @@ kotlin {
         watchosX64(),
         tvosArm64(),
         tvosX64(),
-        mingwX64(),
-        linuxX64()
-        // ,
-        // linuxArm32Hfp(),
-        // linuxMips32()
+        mingwX64("mingw"),
+        linuxX64(),
+        linuxArm32Hfp(),
+        linuxMips32()
     )
 
     jvm()
@@ -85,7 +84,7 @@ kotlin {
         val linuxMain = sourceSets.maybeCreate("nativeLinuxMain").apply {
             dependsOn(nativeCommonMain)
         }
-        val mingwMain = sourceSets.maybeCreate("nativeMingwMain").apply {
+        val mingwMain = sourceSets.maybeCreate("mingwMain").apply {
             dependsOn(nativeCommonMain)
         }
 
