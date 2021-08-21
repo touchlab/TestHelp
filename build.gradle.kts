@@ -131,8 +131,11 @@ tasks.register("publishMac") {
 
 tasks.register("publishWindows") {
     if (project.tasks.findByName("publish") != null) {
-        setDependsOn(listOf("publishMingwX86PublicationToMavenRepository"))
-        setDependsOn(listOf("publishMingwX64PublicationToMavenRepository"))
+        setDependsOn(listOf(
+            "publishMingwX86PublicationToMavenRepository",
+            "publishMingwX64PublicationToMavenRepository"
+        ))
+
         // dependsOn 'publishMingwX64PublicationToMavenRepository'
     }
 }
