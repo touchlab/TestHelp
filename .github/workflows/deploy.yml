@@ -12,7 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macOS-latest, windows-latest, linux-latest]
+        os: [macOS-latest, windows-latest, ubuntu-latest]
     runs-on: ${{matrix.os}}
     steps:
       - name: Checkout the repo
@@ -56,7 +56,7 @@ jobs:
           ORG_GRADLE_PROJECT_SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
 
     - name: Publish Linux Artifacts
-        if: matrix.os == 'linux-latest'
+        if: matrix.os == 'ubuntu-latest'
         run: ./gradlew publishLinux --no-daemon --stacktrace
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
