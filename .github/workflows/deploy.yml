@@ -55,7 +55,7 @@ jobs:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
 
-    - name: Publish Linux Artifacts
+      - name: Publish Linux Artifacts
         if: matrix.os == 'ubuntu-latest'
         run: ./gradlew publishLinux --no-daemon --stacktrace
         env:
