@@ -27,7 +27,8 @@ kotlin {
         watchosX64(),
         tvosArm64(),
         tvosX64(),
-        mingwX64("mingw"),
+        mingwX64(),
+        mingwX86(),
         linuxX64(),
         linuxArm32Hfp(),
         linuxMips32()
@@ -91,6 +92,7 @@ kotlin {
         knTargets.forEach { target ->
             when {
                 target.name.startsWith("mingw") -> {
+                    target.compilations.getByName("main").defaultSourceSet.dependsOn(mingwMain)
                     target.compilations.getByName("test").defaultSourceSet.dependsOn(nativeCommonTest)
                 }
                 target.name.startsWith("linux") -> {
@@ -127,7 +129,8 @@ tasks.register("publishMac") {
 
 tasks.register("publishWindows") {
     if(project.tasks.findByName("publish") != null) {
-        setDependsOn(listOf("publishMingwPublicationToMavenRepository"))
+        setDependsOn(listOf("publishMingwX64PublicationToMavenRepository"))
+        setDependsOn(listOf("publishMingwX86PublicationToMavenRepository"))
         // dependsOn 'publishMingwX64PublicationToMavenRepository'
     }
 }
