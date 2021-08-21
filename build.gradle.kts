@@ -135,8 +135,14 @@ tasks.register("publishWindows") {
             "publishMingwX86PublicationToMavenRepository",
             "publishMingwX64PublicationToMavenRepository"
         ))
+    }
+}
 
-        // dependsOn 'publishMingwX64PublicationToMavenRepository'
+tasks.register("publishLinux") {
+    if (project.tasks.findByName("publish") != null) {
+        setDependsOn(listOf(
+            "publishLinuxMips32PublicationToMavenRepository"
+        ))
     }
 }
 
