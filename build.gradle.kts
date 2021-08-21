@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family.LINUX
+import org.jetbrains.kotlin.konan.target.Family.MINGW
 
 plugins {
     kotlin("multiplatform")
@@ -30,7 +31,8 @@ kotlin {
     watchosX64()
     tvosArm64()
     tvosX64()
-    mingwX64("mingw")
+    mingwX64()
+    mingwX86()
     linuxX64()
     linuxArm32Hfp()
     linuxMips32()
@@ -53,6 +55,7 @@ kotlin {
 
     val nativeDarwinMain by sourceSets.creating
     val nativeLinuxMain by sourceSets.creating
+    val mingwMain by sourceSets.creating
 
     /* Setup dependsOn relationships */
 
@@ -60,6 +63,7 @@ kotlin {
     nativeCommonTest.dependsOn(commonTest)
     nativeDarwinMain.dependsOn(nativeCommonMain)
     nativeLinuxMain.dependsOn(nativeCommonMain)
+    mingwMain.dependsOn(nativeCommonMain)
 
     targets.withType<KotlinNativeTarget>().all {
         val mainSourceSet = compilations.getByName("main").defaultSourceSet
@@ -69,6 +73,7 @@ kotlin {
         testSourceSet.dependsOn(nativeCommonTest)
 
         when {
+            konanTarget.family == MINGW -> mainSourceSet.dependsOn(mingwMain)
             konanTarget.family == LINUX -> mainSourceSet.dependsOn(nativeLinuxMain)
             konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
             else -> mainSourceSet.dependsOn(nativeCommonMain)
@@ -126,7 +131,8 @@ tasks.register("publishMac") {
 
 tasks.register("publishWindows") {
     if (project.tasks.findByName("publish") != null) {
-        setDependsOn(listOf("publishMingwPublicationToMavenRepository"))
+        setDependsOn(listOf("publishMingwX86PublicationToMavenRepository"))
+        setDependsOn(listOf("publishMingwX64PublicationToMavenRepository"))
         // dependsOn 'publishMingwX64PublicationToMavenRepository'
     }
 }
