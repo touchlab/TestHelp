@@ -36,6 +36,12 @@ kotlin {
     linuxX64()
     linuxArm32Hfp()
     linuxMips32()
+
+    macosArm64()
+    iosSimulatorArm64()
+    watchosSimulatorArm64()
+    tvosSimulatorArm64()
+
     jvm()
     js {
         browser()
