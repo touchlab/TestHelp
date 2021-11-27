@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Publish Mac Artifacts
+      - name: Publish Mac/Windows Artifacts
         if: matrix.os == 'macOS-11'
         run: ./gradlew publish --no-daemon --stacktrace
         env:
