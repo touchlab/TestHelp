@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Publish Mac Artifacts
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macOS-11'
         run: ./gradlew publish --no-daemon --stacktrace
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
