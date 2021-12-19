@@ -10,5 +10,3 @@ pluginManagement {
         kotlin("multiplatform") version KOTLIN_VERSION
     }
 }
-
-enableFeaturePreview("GRADLE_METADATA")
