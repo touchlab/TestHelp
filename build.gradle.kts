@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family.LINUX
 import org.jetbrains.kotlin.konan.target.Family.MINGW
+import org.jetbrains.kotlin.konan.target.Family.ANDROID
 
 plugins {
     kotlin("multiplatform")
@@ -42,6 +43,11 @@ kotlin {
     watchosSimulatorArm64()
     tvosSimulatorArm64()
 
+    androidNativeArm32()
+    androidNativeArm64()
+    androidNativeX86()
+    androidNativeX64()
+
     jvm()
     js {
         browser()
@@ -80,7 +86,7 @@ kotlin {
 
         when {
             konanTarget.family == MINGW -> mainSourceSet.dependsOn(mingwMain)
-            konanTarget.family == LINUX -> mainSourceSet.dependsOn(nativeLinuxMain)
+            konanTarget.family == LINUX || konanTarget.family == ANDROID -> mainSourceSet.dependsOn(nativeLinuxMain)
             konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
             else -> mainSourceSet.dependsOn(nativeCommonMain)
         }
