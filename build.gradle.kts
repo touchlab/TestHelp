@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.konan.target.Family.ANDROID
 import org.jetbrains.kotlin.konan.target.Family.LINUX
 import org.jetbrains.kotlin.konan.target.Family.MINGW
-import org.jetbrains.kotlin.konan.target.Family.ANDROID
 
 plugins {
     kotlin("multiplatform")
@@ -42,6 +42,8 @@ kotlin {
     iosSimulatorArm64()
     watchosSimulatorArm64()
     tvosSimulatorArm64()
+
+    watchosDeviceArm64()
 
     androidNativeArm32()
     androidNativeArm64()
