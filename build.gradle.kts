@@ -125,12 +125,4 @@ kotlin {
     }
 }
 
-tasks.register("publishLinux") {
-    if (project.tasks.findByName("publish") != null) {
-        setDependsOn(listOf(
-            "publishLinuxMips32PublicationToMavenRepository"
-        ))
-    }
-}
-
 apply(plugin = "com.vanniktech.maven.publish")
