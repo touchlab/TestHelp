@@ -3,6 +3,12 @@ import org.jetbrains.kotlin.konan.target.Family.ANDROID
 import org.jetbrains.kotlin.konan.target.Family.LINUX
 import org.jetbrains.kotlin.konan.target.Family.MINGW
 
+buildscript {
+    dependencies {
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.23.1")
+    }
+}
+
 plugins {
     kotlin("multiplatform")
 }
@@ -25,18 +31,13 @@ kotlin {
     macosX64()
     iosX64()
     iosArm64()
-    iosArm32()
     watchosArm32()
     watchosArm64()
-    watchosX86()
     watchosX64()
     tvosArm64()
     tvosX64()
     mingwX64()
-    mingwX86()
     linuxX64()
-    linuxArm32Hfp()
-    linuxMips32()
 
     macosArm64()
     iosSimulatorArm64()
@@ -123,35 +124,6 @@ kotlin {
     }
 }
 
-/* Setup Publications */
-
-/*if (!HostManager.hostIsLinux) {
-    tasks.findByName("linuxX64Test")?.enabled = false
-    tasks.findByName("linkDebugTestLinuxX64")?.enabled = false
-    tasks.findByName("publishLinuxX64PublicationToMavenRepository")?.enabled = false
-}*/
-
-apply(from = "gradle/gradle-mvn-mpp-push.gradle")
-
-/*
-tasks.register("publishMac") {
-    setDependsOn(tasks.filter { t ->
-        t.name.startsWith("publish") && t.name.endsWith("ToMavenRepository") && !t.name.contains(
-            "Linux"
-        )
-    }.map { it.name })
-}
-*/
-
-tasks.register("publishWindows") {
-    if (project.tasks.findByName("publish") != null) {
-        setDependsOn(listOf(
-            "publishMingwX86PublicationToMavenRepository",
-            "publishMingwX64PublicationToMavenRepository"
-        ))
-    }
-}
-
 tasks.register("publishLinux") {
     if (project.tasks.findByName("publish") != null) {
         setDependsOn(listOf(
@@ -160,9 +132,4 @@ tasks.register("publishLinux") {
     }
 }
 
-/*
-tasks.register('publishLinux') {
-    if(project.tasks.findByName('publish')) {
-        dependsOn 'publishLinuxMips32PublicationToMavenRepository'
-    }
-}*/
+apply(plugin = "com.vanniktech.maven.publish")
