@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.konan.target.Family.MINGW
 
 buildscript {
     dependencies {
-        classpath("com.vanniktech:gradle-maven-publish-plugin:0.23.1")
+        classpath("com.vanniktech:gradle-maven-publish-plugin:0.25.3")
     }
 }
 
