@@ -14,10 +14,8 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     google()
-    jcenter()
 }
 
 val GROUP: String by project
@@ -27,7 +25,7 @@ group = GROUP
 version = VERSION_NAME
 
 kotlin {
-
+    targetHierarchy.default()
     macosX64()
     iosX64()
     iosArm64()
@@ -57,71 +55,69 @@ kotlin {
         browser()
         nodejs()
     }
-
-    val commonMain by sourceSets.getting
-    val commonTest by sourceSets.getting
-
-    val jvmMain by sourceSets.getting
-    val jvmTest by sourceSets.getting
-    val jsMain by sourceSets.getting
-    val jsTest by sourceSets.getting
-
-    val nativeCommonMain by sourceSets.creating
-    val nativeCommonTest by sourceSets.creating
-
-    val nativeDarwinMain by sourceSets.creating
-    val nativeLinuxMain by sourceSets.creating
-    val mingwMain by sourceSets.creating
-
-    /* Setup dependsOn relationships */
-
-    nativeCommonMain.dependsOn(commonMain)
-    nativeCommonTest.dependsOn(commonTest)
-    nativeDarwinMain.dependsOn(nativeCommonMain)
-    nativeLinuxMain.dependsOn(nativeCommonMain)
-    mingwMain.dependsOn(nativeCommonMain)
-
-    targets.withType<KotlinNativeTarget>().all {
-        val mainSourceSet = compilations.getByName("main").defaultSourceSet
-        val testSourceSet = compilations.getByName("test").defaultSourceSet
-
-        mainSourceSet.dependsOn(nativeCommonMain)
-        testSourceSet.dependsOn(nativeCommonTest)
-
-        when {
-            konanTarget.family == MINGW -> mainSourceSet.dependsOn(mingwMain)
-            konanTarget.family == LINUX || konanTarget.family == ANDROID -> mainSourceSet.dependsOn(nativeLinuxMain)
-            konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
-            else -> mainSourceSet.dependsOn(nativeCommonMain)
+    wasm {
+        browser()
+        binaries.executable()
+    }
+    
+    sourceSets {
+        val commonMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
         }
-    }
 
-    /* Setup dependencies */
+        val jsWasmMain by creating {
+            dependsOn(commonMain)
+        }
+        val jsWasmTest by creating {
+            dependsOn(commonTest)
+        }
+        val jsMain by getting {
+            dependsOn(jsWasmMain)
+        }
+        val jsTest by getting {
+            dependsOn(jsWasmTest)
+        }
+        val wasmMain by getting {
+            dependsOn(jsWasmMain)
+        }
+        val wasmTest by getting {
+            dependsOn(jsWasmTest)
+        }
 
-    commonMain.dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-    }
+        val nativeCommonMain by creating {
+            dependsOn(commonMain)
+        }
+        val nativeCommonTest by creating {
+            dependsOn(commonTest)
+        }
 
-    commonTest.dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-test-common")
-        implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
-    }
+        val nativeDarwinMain by creating {
+            dependsOn(nativeCommonMain)
+        }
+        val nativeLinuxMain by creating {
+            dependsOn(nativeCommonMain)
+        }
+        val mingwMain by getting {
+            dependsOn(nativeCommonMain)
+        }
+        
+        targets.withType<KotlinNativeTarget>().all {
+            val mainSourceSet = compilations.getByName("main").defaultSourceSet
+            val testSourceSet = compilations.getByName("test").defaultSourceSet
 
-    jvmMain.dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    }
+            mainSourceSet.dependsOn(nativeCommonMain)
+            testSourceSet.dependsOn(nativeCommonTest)
 
-    jvmTest.dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-test")
-        implementation("org.jetbrains.kotlin:kotlin-test-junit")
-    }
-
-    jsMain.dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-    }
-
-    jsTest.dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-test-js")
+            when {
+                konanTarget.family == MINGW -> mainSourceSet.dependsOn(mingwMain)
+                konanTarget.family == LINUX || konanTarget.family == ANDROID -> mainSourceSet.dependsOn(nativeLinuxMain)
+                konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
+                else -> mainSourceSet.dependsOn(nativeCommonMain)
+            }
+        }
     }
 }
 
