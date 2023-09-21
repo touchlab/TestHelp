@@ -1,12 +1,14 @@
+@file:OptIn(ObsoleteWorkersApi::class)
+
 package co.touchlab.testhelp.concurrency
 
 import co.touchlab.testhelp.freeze
-import kotlin.native.concurrent.AtomicReference
+import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.Future
 import kotlin.native.concurrent.FutureState
+import kotlin.native.concurrent.ObsoleteWorkersApi
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.system.getTimeMillis
 
 actual class MPWorker actual constructor() {
     val worker = Worker.start()
@@ -49,7 +51,8 @@ actual class MPFuture<T>(private val future: Future<T>, val thrown: AtomicRefere
     }
 
     actual val done: Boolean
-        get() = (future.state == FutureState.THROWN || future.state == FutureState.CANCELLED || future.state == FutureState.INVALID || future.state == FutureState.COMPUTED)
+        get() = (future.state == FutureState.THROWN ||
+                future.state == FutureState.CANCELLED ||
+                future.state == FutureState.INVALID ||
+                future.state == FutureState.COMPUTED)
 }
-
-actual fun currentTimeMillis(): Long = getTimeMillis()

@@ -1,6 +1,7 @@
 package co.touchlab.testhelp.concurrency
 
 import co.touchlab.testhelp.freeze
+import kotlin.time.TimeSource
 
 expect class MPWorker() {
     fun <T> runBackground(backJob: () -> T): MPFuture<T>
@@ -29,7 +30,12 @@ class ThreadOperations<T>(val producer: () -> T) {
         tests.add(proc)
     }
 
-    fun run(threads: Int, randomize: Boolean = false, timeout: Long = 0, onTimeout: () -> Unit = {}): T {
+    fun run(
+        threads: Int,
+        randomize: Boolean = false,
+        timeout: Long = 0,
+        onTimeout: () -> Unit = {}
+    ): T {
         if (randomize) {
             exes.shuffle()
             tests.shuffle()
@@ -38,7 +44,7 @@ class ThreadOperations<T>(val producer: () -> T) {
         exes.freeze()
 
         val target = producer()
-        val start = currentTimeMillis()
+        val start = TimeSource.Monotonic.markNow()
 
         val workers = Array(threads) { MPWorker() }
         val futures = exes.mapIndexed { index, function ->
@@ -52,7 +58,7 @@ class ThreadOperations<T>(val producer: () -> T) {
             futures.forEach { it.consume() }
         } else {
             while (futures.any { !it.done }) {
-                val measured = currentTimeMillis() - start
+                val measured = TimeSource.Monotonic.markNow().minus(start).inWholeMilliseconds
                 if (measured > timeout) {
                     onTimeout()
                     throw TestTimeoutException()
@@ -64,12 +70,10 @@ class ThreadOperations<T>(val producer: () -> T) {
 
         tests.forEach { it(target) }
 
-        lastRunTime = currentTimeMillis() - start
+        lastRunTime = TimeSource.Monotonic.markNow().minus(start).inWholeMilliseconds
 
         return target
     }
 }
 
-class TestTimeoutException() : Exception("ThreadOperations run timed out")
-
-expect fun currentTimeMillis(): Long
+class TestTimeoutException : Exception("ThreadOperations run timed out")

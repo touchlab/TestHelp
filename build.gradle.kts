@@ -59,7 +59,7 @@ kotlin {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
         val commonMain by getting
         val commonTest by getting {
@@ -103,7 +103,7 @@ kotlin {
         val mingwMain by getting {
             dependsOn(nativeCommonMain)
         }
-        
+
         targets.withType<KotlinNativeTarget>().all {
             val mainSourceSet = compilations.getByName("main").defaultSourceSet
             val testSourceSet = compilations.getByName("test").defaultSourceSet
@@ -113,7 +113,10 @@ kotlin {
 
             when {
                 konanTarget.family == MINGW -> mainSourceSet.dependsOn(mingwMain)
-                konanTarget.family == LINUX || konanTarget.family == ANDROID -> mainSourceSet.dependsOn(nativeLinuxMain)
+                konanTarget.family == LINUX || konanTarget.family == ANDROID -> mainSourceSet.dependsOn(
+                    nativeLinuxMain
+                )
+
                 konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
                 else -> mainSourceSet.dependsOn(nativeCommonMain)
             }
