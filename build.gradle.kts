@@ -1,19 +1,10 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
-import org.jetbrains.kotlin.konan.target.Family.ANDROID
-import org.jetbrains.kotlin.konan.target.Family.LINUX
-import org.jetbrains.kotlin.konan.target.Family.MINGW
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.mavenPublish)
-}
-
-repositories {
-    mavenCentral()
-    google()
 }
 
 val GROUP: String by project
@@ -23,6 +14,10 @@ group = GROUP
 version = VERSION_NAME
 
 kotlin {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     macosX64()
     iosX64()
     iosArm64()
@@ -54,68 +49,23 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        // browser()
+        browser()
         nodejs()
         binaries.executable()
     }
 
-    applyDefaultHierarchyTemplate()
-
-    sourceSets {
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
+    @Suppress("OPT_IN_USAGE")
+    applyDefaultHierarchyTemplate {
+        common {
+            group("jsAndWasmJs") {
+                withJs()
+                withWasm()
             }
         }
+    }
 
-        val jsAndWasmJsMain by creating {
-            dependsOn(commonMain.get())
-            jsMain.get().dependsOn(this)
-        }
-        val jsAndWasmJsTest by creating {
-            dependsOn(commonTest)
-            jsTest.get().dependsOn(this)
-        }
-        val wasmJsMain by getting {
-            dependsOn(jsAndWasmJsMain)
-        }
-        val wasmJsTest by getting {
-            dependsOn(jsAndWasmJsTest)
-        }
-
-        val nativeCommonMain by creating {
-            dependsOn(commonMain.get())
-        }
-        val nativeCommonTest by creating {
-            dependsOn(commonTest)
-        }
-
-        val nativeDarwinMain by creating {
-            dependsOn(nativeCommonMain)
-        }
-        val nativeLinuxMain by creating {
-            dependsOn(nativeCommonMain)
-        }
-        val mingwMain by getting {
-            dependsOn(nativeCommonMain)
-        }
-
-        targets.withType<KotlinNativeTarget>().all {
-            val mainSourceSet = compilations.getByName("main").defaultSourceSet
-            val testSourceSet = compilations.getByName("test").defaultSourceSet
-
-            mainSourceSet.dependsOn(nativeCommonMain)
-            testSourceSet.dependsOn(nativeCommonTest)
-
-            when {
-                konanTarget.family == MINGW -> mainSourceSet.dependsOn(mingwMain)
-                konanTarget.family == LINUX ||
-                    konanTarget.family == ANDROID -> mainSourceSet.dependsOn(nativeLinuxMain)
-
-                konanTarget.family.isAppleFamily -> mainSourceSet.dependsOn(nativeDarwinMain)
-                else -> mainSourceSet.dependsOn(nativeCommonMain)
-            }
-        }
+    sourceSets.commonTest.dependencies {
+        implementation(kotlin("test"))
     }
 }
 
@@ -123,9 +73,4 @@ kotlin {
 rootProject.the<NodeJsRootExtension>().apply {
     nodeVersion = "21.0.0-v8-canary202309143a48826a08"
     nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary"
-}
-
-// https://github.com/Kotlin/kotlin-wasm-examples/commit/52445ffc561d1694babf6d9484f8df0807b9ed53
-tasks.withType<KotlinNpmInstallTask>().configureEach {
-    args.add("--ignore-engines")
 }
