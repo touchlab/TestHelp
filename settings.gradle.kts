@@ -2,11 +2,16 @@ rootProject.name = "testhelp"
 
 pluginManagement {
     repositories {
+        mavenCentral()
         google()
         gradlePluginPortal()
     }
-    val KOTLIN_VERSION: String by settings
-    plugins {
-        kotlin("multiplatform") version KOTLIN_VERSION
+}
+
+dependencyResolutionManagement {
+    @Suppress("UnstableApiUsage")
+    repositories {
+        mavenCentral()
+        google()
     }
 }
