@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -47,7 +45,6 @@ kotlin {
         browser()
         nodejs()
     }
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         nodejs()
@@ -58,7 +55,7 @@ kotlin {
         common {
             group("jsAndWasmJs") {
                 withJs()
-                withWasm()
+                withWasmJs()
             }
         }
     }
@@ -66,10 +63,4 @@ kotlin {
     sourceSets.commonTest.dependencies {
         implementation(kotlin("test"))
     }
-}
-
-// https://github.com/Kotlin/kotlin-wasm-examples/commit/701a051d6ee869abcabebff702b3ccd98d51c38d
-rootProject.the<NodeJsRootExtension>().apply {
-    nodeVersion = "21.0.0-v8-canary202309143a48826a08"
-    nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary"
 }
