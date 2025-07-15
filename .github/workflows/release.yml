@@ -42,7 +42,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Publish Artifacts to Maven Central
-        run: ./gradlew publishAndReleaseToMavenCentral --no-daemon --stacktrace --no-build-cache
+        run: ./gradlew publish --no-daemon --stacktrace --no-build-cache
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
