@@ -64,3 +64,9 @@ kotlin {
         implementation(kotlin("test"))
     }
 }
+
+mavenPublishing {
+    // Signing and POM are automatically handled by the plugin + gradle.properties
+    configureBasedOnAppliedPlugins(true, true)
+    publishToMavenCentral()
+}
