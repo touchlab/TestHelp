@@ -6,7 +6,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - uses: touchlab/read-property@0.1
         id: version-name
@@ -21,8 +21,10 @@ jobs:
         with:
           distribution: "adopt"
           java-version: "17"
+
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
+
       - name: Cache gradle
         uses: actions/cache@v4
         with:
@@ -30,6 +32,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       - name: Cache konan
         uses: actions/cache@v4
         with:
@@ -37,8 +40,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('*.gradle.kts') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Finish Maven Central Release
-        run: ./gradlew closeAndReleaseRepository --no-daemon --stacktrace --no-build-cache
+
+      - name: Publish Artifacts to Maven Central
+        run: ./gradlew publish --no-daemon --stacktrace --no-build-cache
         env:
           ORG_GRADLE_PROJECT_SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
